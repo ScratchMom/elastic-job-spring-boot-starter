@@ -42,7 +42,7 @@ public class JobService {
     private ZookeeperRegistryCenter zookeeperRegistryCenter;
 
     @Autowired
-    private ApplicationContext ctx;
+    private ApplicationContext applicationContext;
 
     public void addJob(Job job) {
         // 核心配置
@@ -105,9 +105,9 @@ public class JobService {
         }
 
         factory.addConstructorArgValue(elasticJobListeners);
-        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) ctx.getAutowireCapableBeanFactory();
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
         defaultListableBeanFactory.registerBeanDefinition("SpringJobScheduler" + job.getJobName(), factory.getBeanDefinition());
-        SpringJobScheduler springJobScheduler = (SpringJobScheduler) ctx.getBean("SpringJobScheduler" + job.getJobName());
+        SpringJobScheduler springJobScheduler = (SpringJobScheduler) applicationContext.getBean("SpringJobScheduler" + job.getJobName());
         springJobScheduler.init();
         logger.info("【" + job.getJobName() + "】\t" + job.getJobClass() + "\tinit success");
     }
@@ -149,6 +149,7 @@ public class JobService {
         @SuppressWarnings("resource")
         PathChildrenCache childrenCache = new PathChildrenCache(client, "/", true);
         PathChildrenCacheListener childrenCacheListener = new PathChildrenCacheListener() {
+            @Override
             public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
                 ChildData data = event.getData();
                 switch (event.getType()) {
@@ -158,7 +159,7 @@ public class JobService {
                         Object bean = null;
                         // 获取bean失败则添加任务
                         try {
-                            bean = ctx.getBean("SpringJobScheduler" + job.getJobName());
+                            bean = applicationContext.getBean("SpringJobScheduler" + job.getJobName());
                         } catch (BeansException e) {
                             logger.error("ERROR NO BEAN,CREATE BEAN SpringJobScheduler" + job.getJobName());
                         }
