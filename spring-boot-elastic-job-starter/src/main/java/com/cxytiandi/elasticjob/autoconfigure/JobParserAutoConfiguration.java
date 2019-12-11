@@ -29,8 +29,8 @@ public class JobParserAutoConfiguration {
 	 */
 	@Bean(initMethod = "init")
     public ZookeeperRegistryCenter zookeeperRegistryCenter() {
-		ZookeeperConfiguration zkConfig = new ZookeeperConfiguration(zookeeperProperties.getServerLists(), 
-				zookeeperProperties.getNamespace());
+		ZookeeperConfiguration zkConfig =
+				new ZookeeperConfiguration(zookeeperProperties.getServerLists(), zookeeperProperties.getNamespace());
 		zkConfig.setBaseSleepTimeMilliseconds(zookeeperProperties.getBaseSleepTimeMilliseconds());
 		zkConfig.setConnectionTimeoutMilliseconds(zookeeperProperties.getConnectionTimeoutMilliseconds());
 		zkConfig.setDigest(zookeeperProperties.getDigest());
